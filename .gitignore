@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+TestResults/
+*.user
+.vs/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+
+# IDE / tooling
+.idea/
+.claude/
+*.swp

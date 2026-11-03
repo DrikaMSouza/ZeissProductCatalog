@@ -1,0 +1,92 @@
+<form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>SKU</mat-label>
+      <input matInput formControlName="sku" [maxlength]="limits.skuMaxLength" autocomplete="off" />
+      <mat-hint>Letters, digits and dashes. Stored in upper case.</mat-hint>
+      @let sku = form.controls.sku;
+      @if (sku.hasError('required')) {
+        <mat-error>SKU is required.</mat-error>
+      } @else if (sku.hasError('pattern')) {
+        <mat-error>Only letters, digits and dashes are allowed.</mat-error>
+      } @else if (sku.hasError('server')) {
+        <mat-error>{{ sku.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="grow">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" [maxlength]="limits.nameMaxLength" />
+      @let name = form.controls.name;
+      @if (name.hasError('required')) {
+        <mat-error>Name is required.</mat-error>
+      } @else if (name.hasError('server')) {
+        <mat-error>{{ name.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Description</mat-label>
+    <textarea matInput rows="3" formControlName="description" [maxlength]="limits.descriptionMaxLength"></textarea>
+    <mat-hint align="end">{{ form.controls.description.value?.length ?? 0 }} / {{ limits.descriptionMaxLength }}</mat-hint>
+  </mat-form-field>
+
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>Price (EUR)</mat-label>
+      <input matInput type="number" step="0.01" min="0.01" formControlName="price" />
+      @let price = form.controls.price;
+      @if (price.hasError('required')) {
+        <mat-error>Price is required.</mat-error>
+      } @else if (price.hasError('min')) {
+        <mat-error>Price must be greater than 0.</mat-error>
+      } @else if (price.hasError('max')) {
+        <mat-error>Price cannot exceed {{ limits.maxPrice }}.</mat-error>
+      } @else if (price.hasError('pattern')) {
+        <mat-error>Use at most 2 decimal places.</mat-error>
+      } @else if (price.hasError('server')) {
+        <mat-error>{{ price.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Stock quantity</mat-label>
+      <input matInput type="number" min="0" step="1" formControlName="stockQuantity" />
+      @let stock = form.controls.stockQuantity;
+      @if (stock.hasError('required')) {
+        <mat-error>Stock quantity is required.</mat-error>
+      } @else if (stock.hasError('min') || stock.hasError('pattern')) {
+        <mat-error>Stock must be a whole number of 0 or more.</mat-error>
+      } @else if (stock.hasError('server')) {
+        <mat-error>{{ stock.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="grow">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="categoryId">
+        @for (category of categories(); track category.id) {
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+      @let category = form.controls.categoryId;
+      @if (category.hasError('required')) {
+        <mat-error>Category is required.</mat-error>
+      } @else if (category.hasError('server')) {
+        <mat-error>{{ category.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="actions">
+    <button mat-button type="button" (click)="cancelled.emit()">Cancel</button>
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      @if (saving()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ product() ? 'Save changes' : 'Create product' }}
+      }
+    </button>
+  </div>
+</form>

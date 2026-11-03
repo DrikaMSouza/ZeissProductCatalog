@@ -1,0 +1,34 @@
+<a mat-button routerLink="/products" class="back">
+  <mat-icon>arrow_back</mat-icon>
+  Back to products
+</a>
+
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>{{ isEdit() ? 'Edit product' : 'New product' }}</mat-card-title>
+    @if (product.value(); as current) {
+      <mat-card-subtitle>ID {{ current.id }} · currently {{ current.stockQuantity }} unit(s) in stock</mat-card-subtitle>
+    } @else if (!isEdit()) {
+      <mat-card-subtitle>A unique 6-digit ID is assigned by the server.</mat-card-subtitle>
+    }
+  </mat-card-header>
+
+  @if (product.isLoading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <mat-card-content>
+    @if (product.error()) {
+      <p class="error" role="alert">{{ loadErrorMessage() }}</p>
+    } @else if (!isEdit() || product.hasValue()) {
+      <app-product-form
+        [product]="product.value() ?? null"
+        [categories]="categories()"
+        [saving]="saving()"
+        [serverErrors]="serverErrors()"
+        (save)="save($event)"
+        (cancelled)="cancel()"
+      />
+    }
+  </mat-card-content>
+</mat-card>

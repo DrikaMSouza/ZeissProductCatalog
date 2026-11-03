@@ -1,0 +1,44 @@
+<form class="filters" [formGroup]="form" (submit)="$event.preventDefault()">
+  <mat-form-field appearance="outline" class="name" subscriptSizing="dynamic">
+    <mat-label>Search by name</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput formControlName="name" placeholder="e.g. lens" autocomplete="off" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="stock" subscriptSizing="dynamic">
+    <mat-label>Min stock</mat-label>
+    <input matInput type="number" min="0" formControlName="minStock" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="stock" subscriptSizing="dynamic">
+    <mat-label>Max stock</mat-label>
+    <input matInput type="number" min="0" formControlName="maxStock" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="category" subscriptSizing="dynamic">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="categoryId">
+      <mat-option [value]="null">All categories</mat-option>
+      @for (category of categories(); track category.id) {
+        <mat-option [value]="category.id">{{ category.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-stroked-button type="button" (click)="showLowStock()">
+      <mat-icon>warning</mat-icon>
+      Low stock
+    </button>
+    @if (hasActiveFilter) {
+      <button mat-button type="button" (click)="clear()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Clear
+      </button>
+    }
+  </div>
+</form>
+
+@if (form.hasError('range') || form.controls.minStock.invalid || form.controls.maxStock.invalid) {
+  <p class="error" role="alert">Stock values must be positive and "min" cannot exceed "max".</p>
+}

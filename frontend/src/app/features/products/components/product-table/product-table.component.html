@@ -1,0 +1,94 @@
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="name" matSortDirection="asc">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+      <td mat-cell *matCellDef="let product" class="mono">{{ product.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="sku">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>SKU</th>
+      <td mat-cell *matCellDef="let product" class="mono">{{ product.sku }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let product">
+        <div class="name">{{ product.name }}</div>
+        @if (product.description) {
+          <div class="description">{{ product.description }}</div>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="categoryName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
+      <td mat-cell *matCellDef="let product">{{ product.categoryName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="numeric">
+        Price
+      </th>
+      <td mat-cell *matCellDef="let product" class="numeric">
+        {{ product.price | currency: 'EUR' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="stockQuantity">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Stock</th>
+      <td mat-cell *matCellDef="let product">
+        <app-stock-status-chip [quantity]="product.stockQuantity" />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updatedAtUtc">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last update</th>
+      <td mat-cell *matCellDef="let product">{{ product.updatedAtUtc | date: 'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+      <td mat-cell *matCellDef="let product" class="actions">
+        <button
+          mat-icon-button
+          matTooltip="Add to stock"
+          [attr.aria-label]="'Add stock to ' + product.name"
+          (click)="changeStock.emit({ product, movement: 'add' })"
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          matTooltip="Remove from stock"
+          [attr.aria-label]="'Remove stock from ' + product.name"
+          [disabled]="product.stockQuantity === 0"
+          (click)="changeStock.emit({ product, movement: 'decrement' })"
+        >
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="menu" [attr.aria-label]="'More actions for ' + product.name">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="edit.emit(product)">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="remove.emit(product)">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="no-data" [attr.colspan]="columns.length">No products match the current filters.</td>
+    </tr>
+  </table>
+</div>
+
+<mat-paginator [pageSizeOptions]="[10, 25, 50]" [pageSize]="10" showFirstLastButtons aria-label="Select page of products" />

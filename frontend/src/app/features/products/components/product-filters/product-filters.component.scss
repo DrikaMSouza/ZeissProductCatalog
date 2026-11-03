@@ -1,0 +1,29 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.name {
+  flex: 2 1 240px;
+}
+
+.stock {
+  flex: 0 1 130px;
+}
+
+.category {
+  flex: 1 1 180px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error {
+  margin: 8px 0 0;
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-small);
+}

@@ -1,0 +1,82 @@
+<header class="page-header">
+  <div>
+    <h1>Products</h1>
+    <p class="subtitle">
+      @if (store.lastSyncedAt(); as syncedAt) {
+        Synchronised with the API at {{ syncedAt | date: 'mediumTime' }}
+      } @else {
+        Loading catalogue…
+      }
+    </p>
+  </div>
+  <div class="header-actions">
+    <mat-slide-toggle [checked]="autoRefresh()" (change)="autoRefresh.set($event.checked)">
+      Auto refresh
+    </mat-slide-toggle>
+    <button mat-stroked-button (click)="store.load()" [disabled]="store.loading()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+    <a mat-flat-button routerLink="/products/new">
+      <mat-icon>add</mat-icon>
+      New product
+    </a>
+  </div>
+</header>
+
+@let summary = store.summary();
+<section class="summary" aria-label="Stock summary">
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <span class="label">Products</span>
+      <span class="value">{{ summary.count }}</span>
+    </mat-card-content>
+  </mat-card>
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <span class="label">Units in stock</span>
+      <span class="value">{{ summary.totalUnits | number }}</span>
+    </mat-card-content>
+  </mat-card>
+  <mat-card appearance="outlined" class="warn">
+    <mat-card-content>
+      <span class="label">Low stock</span>
+      <span class="value">{{ summary.lowStock }}</span>
+    </mat-card-content>
+  </mat-card>
+  <mat-card appearance="outlined" class="danger">
+    <mat-card-content>
+      <span class="label">Out of stock</span>
+      <span class="value">{{ summary.outOfStock }}</span>
+    </mat-card-content>
+  </mat-card>
+</section>
+
+<mat-card appearance="outlined" class="list-card">
+  <mat-card-content>
+    <app-product-filters
+      [filter]="store.filter()"
+      [categories]="categories()"
+      (filterChange)="store.setFilter($event)"
+    />
+  </mat-card-content>
+
+  @if (store.loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (store.error(); as error) {
+    <div class="error-banner" role="alert">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+      <button mat-button (click)="store.load()">Try again</button>
+    </div>
+  }
+
+  <app-product-table
+    [products]="store.products()"
+    (edit)="edit($event)"
+    (remove)="remove($event)"
+    (changeStock)="changeStock($event)"
+  />
+</mat-card>

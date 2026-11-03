@@ -1,0 +1,42 @@
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mono {
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.name {
+  font-weight: 500;
+}
+
+.description {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.numeric {
+  text-align: right;
+}
+
+.actions,
+.actions-header {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.no-data {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
